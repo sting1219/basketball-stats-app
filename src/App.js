@@ -103,17 +103,21 @@ function App() {
       <h1 className="text-center mb-4">농구 스탯 트래커</h1>
       <TeamStatsSummary players={players} />
       <PlayerStatsTable players={players} />
-      <div className="input-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="선수 이름 입력"
-          value={newPlayerName}
-          onChange={(e) => setNewPlayerName(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && addPlayer()}
-        />
-        <button className="btn btn-primary" type="button" onClick={addPlayer}>선수 추가</button>
-        <button className="btn btn-danger" type="button" onClick={resetGame}>게임 초기화</button>
+      <div className="row mb-3">
+        <div className="col-12 col-md-8 mb-2 mb-md-0">
+          <input
+            type="text"
+            className="form-control form-control-lg"
+            placeholder="선수 이름 입력"
+            value={newPlayerName}
+            onChange={(e) => setNewPlayerName(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && addPlayer()}
+          />
+        </div>
+        <div className="col-12 col-md-4 d-grid gap-2 d-md-block">
+          <button className="btn btn-primary btn-lg me-md-2" type="button" onClick={addPlayer}>선수 추가</button>
+          <button className="btn btn-danger btn-lg" type="button" onClick={resetGame}>게임 초기화</button>
+        </div>
       </div>
 
       <div className="row">

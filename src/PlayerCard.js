@@ -35,7 +35,7 @@ function PlayerCard({ player, onRemove, onUpdateStat, onShot, onShotCorrection }
     <div className="card h-100">
       <div className="card-header d-flex justify-content-between align-items-center">
         <h5 className="card-title mb-0">{player.name}</h5>
-        <button className="btn btn-sm btn-outline-danger" onClick={onRemove}>삭제</button>
+        <button className="btn btn-outline-danger" onClick={onRemove}>삭제</button>
       </div>
       <div className="card-body">
         <h4 className="text-center mb-3">총 득점: {totalPoints}</h4>
