@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import TeamStatsSummary from './TeamStatsSummary';
 import PlayerStatsTable from './PlayerStatsTable';
+import * as XLSX from 'xlsx';
 
 function App() {
   // 앱 시작 시 localStorage에서 데이터를 불러오거나, 없으면 빈 배열로 시작
@@ -98,6 +99,68 @@ function App() {
     }
   };
 
+  const exportToExcel = () => {
+    const wb = XLSX.utils.book_new();
+
+    // Helper function to calculate percentage
+    const calculatePercentage = (made, attempted) => {
+      if (attempted === 0) return '0.0%';
+      return ((made / attempted) * 100).toFixed(1) + '%';
+    };
+
+    // Team Stats Sheet
+    const totalStats = players.reduce((acc, player) => {
+        for (const key in player.stats) {
+            acc[key] = (acc[key] || 0) + player.stats[key];
+        }
+        return acc;
+    }, { ...initialStats });
+
+    const totalPoints = totalStats.twoPointsMade * 2 + totalStats.threePointsMade * 3 + totalStats.freeThrowsMade;
+
+    const teamData = [
+        ['팀 전체 스탯'],
+        ['총 득점', totalPoints],
+        [],
+        ['리바운드', totalStats.rebounds],
+        ['어시스트', totalStats.assists],
+        ['스틸', totalStats.steals],
+        ['블록', totalStats.blocks],
+        ['턴오버', totalStats.turnovers],
+        ['파울', totalStats.fouls],
+        [],
+        ['2점슛', `${totalStats.twoPointsMade} / ${totalStats.twoPointsAttempted} (${calculatePercentage(totalStats.twoPointsMade, totalStats.twoPointsAttempted)})`],
+        ['3점슛', `${totalStats.threePointsMade} / ${totalStats.threePointsAttempted} (${calculatePercentage(totalStats.threePointsMade, totalStats.threePointsAttempted)})`],
+        ['자유투', `${totalStats.freeThrowsMade} / ${totalStats.freeThrowsAttempted} (${calculatePercentage(totalStats.freeThrowsMade, totalStats.freeThrowsAttempted)})`]
+    ];
+
+    const wsTeam = XLSX.utils.aoa_to_sheet(teamData);
+    XLSX.utils.book_append_sheet(wb, wsTeam, 'Team Stats');
+
+    // Individual Player Stats Sheet
+    const individualData = players.map(player => ({
+        '선수': player.name,
+        '득점': player.stats.twoPointsMade * 2 + player.stats.threePointsMade * 3 + player.stats.freeThrowsMade,
+        '2점 (성공/시도)': `${player.stats.twoPointsMade}/${player.stats.twoPointsAttempted}`,
+        '2점 성공률': calculatePercentage(player.stats.twoPointsMade, player.stats.twoPointsAttempted),
+        '3점 (성공/시도)': `${player.stats.threePointsMade}/${player.stats.threePointsAttempted}`,
+        '3점 성공률': calculatePercentage(player.stats.threePointsMade, player.stats.threePointsAttempted),
+        '자유투 (성공/시도)': `${player.stats.freeThrowsMade}/${player.stats.freeThrowsAttempted}`,
+        '자유투 성공률': calculatePercentage(player.stats.freeThrowsMade, player.stats.freeThrowsAttempted),
+        '리바운드': player.stats.rebounds,
+        '어시스트': player.stats.assists,
+        '스틸': player.stats.steals,
+        '블록': player.stats.blocks,
+        '턴오버': player.stats.turnovers,
+        '파울': player.stats.fouls
+    }));
+
+    const wsIndividual = XLSX.utils.json_to_sheet(individualData);
+    XLSX.utils.book_append_sheet(wb, wsIndividual, 'Individual Stats');
+
+    XLSX.writeFile(wb, 'basketball-stats.xlsx');
+  }
+
   return (
     <div className="container mt-5">
       <h1 className="text-center mb-4">농구 스탯 트래커</h1>
@@ -117,6 +180,7 @@ function App() {
         <div className="col-12 col-md-4 d-grid gap-2 d-md-block">
           <button className="btn btn-primary btn-lg me-md-2" type="button" onClick={addPlayer}>선수 추가</button>
           <button className="btn btn-danger btn-lg" type="button" onClick={resetGame}>게임 초기화</button>
+          <button className="btn btn-success btn-lg" type="button" onClick={exportToExcel}>Export to Excel</button>
         </div>
       </div>
 

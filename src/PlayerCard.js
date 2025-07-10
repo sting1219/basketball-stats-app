@@ -1,4 +1,4 @@
- import React from 'react';
+import React from 'react';
 
 function PlayerCard({ player, onRemove, onUpdateStat, onShot, onShotCorrection }) {
 
@@ -32,47 +32,53 @@ function PlayerCard({ player, onRemove, onUpdateStat, onShot, onShotCorrection }
   };
 
   return (
-    <div className="card h-100">
-      <div className="card-header d-flex justify-content-between align-items-center">
+    <div className="card h-100 shadow-sm">
+      <div className="card-header bg-dark text-white d-flex justify-content-between align-items-center">
         <h5 className="card-title mb-0">{player.name}</h5>
-        <button className="btn btn-outline-danger" onClick={onRemove}>삭제</button>
+        <button className="btn btn-sm btn-outline-danger" onClick={onRemove}>삭제</button>
       </div>
       <div className="card-body">
-        <h4 className="text-center mb-3">총 득점: {totalPoints}</h4>
+        <div className="text-center mb-4">
+          <h3 className="display-4">{totalPoints}</h3>
+          <h6 className="text-muted">총 득점</h6>
+        </div>
 
-        {shotTypes.map(({ name, type }) => (
-          <div className="mb-3" key={type}>
-            <h6>{name}</h6>
-            <div className="d-flex justify-content-start align-items-center mb-1">
-              {/* --- 수정된 부분 --- */}
-              <button className="btn btn-sm btn-success" onClick={() => onShot(type, true)}>성공</button>
-              <button className="btn btn-sm btn-outline-secondary ms-1" onClick={() => onShotCorrection(type, true)}>-</button>
-
-              <button className="btn btn-sm btn-danger ms-3" onClick={() => onShot(type, false)}>실패</button>
-              <button className="btn btn-sm btn-outline-secondary ms-1" onClick={() => onShotCorrection(type, false)}>-</button>
-              {/* ------------------ */}
+        <div className="row text-center">
+          {shotTypes.map(({ name, type }) => (
+            <div className="col-12 mb-3" key={type}>
+              <h6>{name}</h6>
+              <div className="d-flex justify-content-center align-items-center mb-2">
+                <button className="btn btn-sm btn-success me-1" onClick={() => onShot(type, true)}>성공</button>
+                <button className="btn btn-sm btn-outline-secondary" onClick={() => onShotCorrection(type, true)}>-</button>
+                <button className="btn btn-sm btn-danger ms-3 me-1" onClick={() => onShot(type, false)}>실패</button>
+                <button className="btn btn-sm btn-outline-secondary" onClick={() => onShotCorrection(type, false)}>-</button>
+              </div>
+              <div className="fs-6 text-muted">
+                {player.stats[`${type}Made`]} / {player.stats[`${type}Attempted`]}
+                <span className="fw-bold ms-2">
+                  ({calculatePercentage(player.stats[`${type}Made`], player.stats[`${type}Attempted`])})
+                </span>
+              </div>
             </div>
-            <div className="text-muted">
-              {player.stats[`${type}Made`]} / {player.stats[`${type}Attempted`]}
-              <span className="ms-2">({calculatePercentage(player.stats[`${type}Made`], player.stats[`${type}Attempted`])})</span>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
         <hr />
 
-        <ul className="list-group list-group-flush">
+        <div className="row">
           {otherStats.map((statName) => (
-            <li className="list-group-item d-flex justify-content-between align-items-center px-0" key={statName}>
-              <span className="text-capitalize">{statTranslations[statName]}</span>
-              <div>
-                <button className="btn btn-sm btn-secondary me-2" onClick={() => onUpdateStat(statName, -1)}>-</button>
-                <span className="badge bg-primary rounded-pill">{player.stats[statName]}</span>
-                <button className="btn btn-sm btn-secondary ms-2" onClick={() => onUpdateStat(statName, 1)}>+</button>
+            <div className="col-6 mb-3" key={statName}>
+              <div className="d-flex flex-column align-items-center">
+                <span className="text-capitalize small text-muted">{statTranslations[statName]}</span>
+                <div className="d-flex align-items-center mt-1">
+                  <button className="btn btn-sm btn-outline-secondary" onClick={() => onUpdateStat(statName, -1)}>-</button>
+                  <span className="mx-2 fs-5 fw-bold">{player.stats[statName]}</span>
+                  <button className="btn btn-sm btn-outline-secondary" onClick={() => onUpdateStat(statName, 1)}>+</button>
+                </div>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
