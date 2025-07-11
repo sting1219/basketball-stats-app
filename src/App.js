@@ -21,6 +21,11 @@ function App() {
   // players 상태가 변경될 때마다 localStorage에 자동으로 저장
   useEffect(() => {
     localStorage.setItem('players', JSON.stringify(players));
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.error(e);
+    }
   }, [players]);
 
   const initialStats = {
@@ -197,6 +202,7 @@ function App() {
           </div>
         ))}
       </div>
+      <ins className="adsbygoogle"     style={{display:"block"}}     data-ad-format="autorelaxed"     data-ad-client="ca-pub-3565697632228043"     data-ad-slot="2167085990"></ins>
     </div>
   );
 }
